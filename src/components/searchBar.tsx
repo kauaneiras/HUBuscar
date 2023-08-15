@@ -6,50 +6,55 @@ import menu from '../assets/imgs/menu.png';
 
 export default function SearchBar() {
     const [isExpanded, setIsExpanded] = useState(false);
-    const [searchText, setSearchText] = useState('');
+    const [searchText, setSearchText] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
-
+  
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter" && searchText.trim() !== "") {window.location.href = `/search/${searchText}`;}
+    };
+  
     useEffect(() => {
-        if (isExpanded) {inputRef.current?.focus();}
-        const handleDocumentClick = (event: MouseEvent) => {
-            if (!event.target) return;
-            const target = event.target as HTMLElement;
-            if (!target.closest('#search-bar-container')) {
-                setIsExpanded(false);
-                setSearchText('');
-            }
-        };
-        document.addEventListener('click', handleDocumentClick);
-        return () => {document.removeEventListener('click', handleDocumentClick);};
+      if (isExpanded) {inputRef.current?.focus();}
+      const handleDocumentClick = (event: MouseEvent) => {
+        if (!event.target) return;
+        const target = event.target as HTMLElement;
+        if (!target.closest("#search-bar-container")) {setIsExpanded(false); setSearchText("");}
+      };
+      document.addEventListener("click", handleDocumentClick);
+      return () => {document.removeEventListener("click", handleDocumentClick);};
     }, [isExpanded]);
-
+  
     return (
-        <SearchBarAndSuggestionContainer onBlur={() => setIsExpanded(false)}>
-            <Container id="search-bar-container">
-                {!isExpanded && <MenuIcon src={menu} alt="menu" />}
-                <SearchIconContainer isExpanded={isExpanded} onClick={() => !isExpanded && setIsExpanded(true)} disabled={isExpanded}>
-                    <SearchIcon src={lupa} />
-                    <Input
-                        ref={inputRef}
-                        isExpanded={isExpanded}
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                        placeholder="Pesquise por um usuário"
-                    />
-                    {searchText && <ClearButton onClick={() => setSearchText('')}>X</ClearButton>}
-                </SearchIconContainer>
-            </Container>
-            <AlignSuggestion>{searchText && <Link to={`/search/${searchText}`}>
-            <SuggestionContainer>
+      <SearchBarAndSuggestionContainer onBlur={() => setIsExpanded(false)}>
+        <Container id="search-bar-container">
+          {!isExpanded && <MenuIcon src={menu} alt="menu" />}
+          <SearchIconContainer isExpanded={isExpanded} onClick={() => !isExpanded && setIsExpanded(true)} disabled={isExpanded}>
+            <SearchIcon src={lupa} />
+            <Input
+              ref={inputRef}
+              isExpanded={isExpanded}
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Pesquise por um usuário"
+            />
+            {searchText && <ClearButton onClick={() => setSearchText("")}>X</ClearButton>}
+          </SearchIconContainer>
+        </Container>
+        <AlignSuggestion>
+          {searchText && (
+            <Link to={`/search/${searchText}`}>
+              <SuggestionContainer>
                 <SearchIcon src={lupa} />
                 {searchText}
                 <p> Pesquisar no HUBuscar </p>
-                </SuggestionContainer>
-                </Link>}
-            </AlignSuggestion>
-        </SearchBarAndSuggestionContainer>
+              </SuggestionContainer>
+            </Link>
+          )}
+        </AlignSuggestion>
+      </SearchBarAndSuggestionContainer>
     );
-};
+  };
 
 const SearchBarAndSuggestionContainer = styled.div`
     display: flex;
