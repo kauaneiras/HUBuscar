@@ -2,37 +2,35 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-interface UsersCardProps {login: string; photo: string;}
+interface UsersCardProps { login: string; photo: string; }
 
 const UsersCard: React.FC<UsersCardProps> = (props) => {
-  const handleLinkClick = () => {
-    const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const userExists = storedUsers.some((user: any) => user.login === props.login);
+    const handleLinkClick = () => {
+        const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
+        const userExists = storedUsers.some((user: any) => user.login === props.login);
 
-    if (!userExists) {
-      const userData = {login: props.login, photo: props.photo};
-      storedUsers.push(userData);
-      localStorage.setItem('users', JSON.stringify(storedUsers));
-    }
-  };
+        if (!userExists) {
+            const userData = { login: props.login, photo: props.photo };
+            storedUsers.push(userData);
+            localStorage.setItem('users', JSON.stringify(storedUsers));
+        }
+    };
 
-  return (
-    <Link
-      to={`/profile/${props.login}`}
-      style={{ textDecoration: 'none', color: '#000' }}
-      onClick={handleLinkClick}
-    >
-      <Card>
-        <UserImg src={props.photo} alt="user" />
-        <UserName>{props.login}</UserName>
-      </Card>
-    </Link>
-  );
+    return (
+        <Link
+            to={`/profile/${props.login}`}
+            style={{ textDecoration: 'none', color: '#000' }}
+            onClick={handleLinkClick}
+        >
+            <Card>
+                <UserImg src={props.photo} alt="user" />
+                <UserName>{props.login}</UserName>
+            </Card>
+        </Link>
+    );
 };
 
 export default UsersCard;
-
-
 
 const Card = styled.div`
     display: flex;

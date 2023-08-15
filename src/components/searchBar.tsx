@@ -1,17 +1,23 @@
+//----------------------------------------- Imports -----------------------------------------//
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+//----------------------------------------- Component -----------------------------------------//
+import Navbar from './navbar';
+//----------------------------------------- Images -----------------------------------------//
 import lupa from '../assets/imgs/lupa.png';
 import menu from '../assets/imgs/menu.png';
+//----------------------------------------- colors -----------------------------------------//
+import colors from '../style/colors'
+
 
 const SearchBar: React.FC = () => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [navbarOpen, setNavbarOpen] = useState(false); 
     const [searchText, setSearchText] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
   
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Enter" && searchText.trim() !== "") {window.location.href = `/search/${searchText}`;}
-    };
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {if (event.key === "Enter" && searchText.trim() !== "") {window.location.href = `/search/${searchText}`;}};
   
     useEffect(() => {
       if (isExpanded) {inputRef.current?.focus();}
@@ -23,21 +29,17 @@ const SearchBar: React.FC = () => {
       document.addEventListener("click", handleDocumentClick);
       return () => {document.removeEventListener("click", handleDocumentClick);};
     }, [isExpanded]);
+
   
     return (
+      <>
+      {navbarOpen && <Navbar setNavbarOpen={setNavbarOpen} />}
       <SearchBarAndSuggestionContainer onBlur={() => setIsExpanded(false)}>
         <Container id="search-bar-container">
-          {!isExpanded && <MenuIcon src={menu} alt="menu" />}
+          {!isExpanded && <MenuIcon src={menu} alt="menu" onClick={() => setNavbarOpen(true)}/>}
           <SearchIconContainer isExpanded={isExpanded} onClick={() => !isExpanded && setIsExpanded(true)} disabled={isExpanded}>
             <SearchIcon src={lupa} />
-            <Input
-              ref={inputRef}
-              isExpanded={isExpanded}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Pesquise por um usuário"
-            />
+            <Input ref={inputRef} isExpanded={isExpanded} value={searchText} onChange={(e) => setSearchText(e.target.value)} onKeyDown={handleKeyDown} placeholder="Pesquise por um usuário"/>
             {searchText && <ClearButton onClick={() => setSearchText("")}>X</ClearButton>}
           </SearchIconContainer>
         </Container>
@@ -53,11 +55,13 @@ const SearchBar: React.FC = () => {
           )}
         </AlignSuggestion>
       </SearchBarAndSuggestionContainer>
+      </>
     );
   };
 
 export default SearchBar;
 
+//----------------------------------------- Style -----------------------------------------//
 const SearchBarAndSuggestionContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -76,7 +80,7 @@ const SuggestionContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: white;
+    background-color: ${colors.light.searchBarBackground};
     border: 1px solid #ccc;
     width: 90%;
     top: 50px;
@@ -91,6 +95,7 @@ const SuggestionContainer = styled.div`
 
 const Container = styled.div`
     display: flex;
+    height: 70px;
     align-items: center;
     justify-content: space-between;
     position: relative;
@@ -102,7 +107,7 @@ const SearchIconContainer = styled.button<{ isExpanded: boolean }>`
     width: ${props => (props.isExpanded ? '100%' : '50px')};
     height: 50px;
     border-radius: 25px;
-    background-color: white;
+    background-color: ${colors.light.searchBarBackground};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -111,16 +116,8 @@ const SearchIconContainer = styled.button<{ isExpanded: boolean }>`
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
 `;
 
-const SearchIcon = styled.img`
-    width: 30px;
-    height: 30px;
-`;
-
-const MenuIcon = styled.img`
-    width: 30px;
-    height: 30px;
-`;
-
+const SearchIcon = styled.img`width: 30px; height: 30px;`;
+const MenuIcon = styled.img`width: 30px; height: 30px;`;
 const Input = styled.input<{ isExpanded: boolean }>`
     width: ${props => (props.isExpanded ? 'calc(100% - 40px)' : '0')};
     height: 100%;

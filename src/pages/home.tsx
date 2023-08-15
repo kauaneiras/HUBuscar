@@ -7,12 +7,11 @@ const Home: React.FC = () => {
     const [count, setCount] = useState(0);
     return (
         <><SearchBar />
-        <Container>
-            
-            <Title>Home</Title>
-            <SubTitle>Contador: {count}</SubTitle>
-            <Button onClick={() => setCount((count) => count + 1)}>Clique aqui</Button>
-        </Container>
+            <Container>
+                <Title>Home</Title>
+                <SubTitle>Contador: {count}</SubTitle>
+                <Button onClick={() => setCount((count) => count + 1)}>Clique aqui</Button>
+            </Container>
         </>
     );
 }

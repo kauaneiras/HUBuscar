@@ -10,19 +10,19 @@ interface RepoCardProps {
     created_at: string;
     update_at: string;
     language: string;
-    stars: number;	
+    stars: number;
     forks: number;
     link: string;
 }
 const RepoCard: React.FC<RepoCardProps> = (props) => {
 
     function formatDate(i: string): string {
-      const date = new Date(i);
-      return format(date, 'dd MMM yyyy');
+        const date = new Date(i);
+        return format(date, 'dd MMM yyyy');
     }
 
     console.log(props);
-    
+
 
     return (
         <Link to={`https://github.com/${props.login}/${props.name}`} style={{ textDecoration: 'none', color: '#000' }}>

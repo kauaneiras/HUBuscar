@@ -6,43 +6,43 @@ import styled from "styled-components";
 
 
 const Search: React.FC = () => {
-  const { searchText } = useParams();
-  const [searchResult, setSearchResult] = useState<any>(null);
+    const { searchText } = useParams();
+    const [searchResult, setSearchResult] = useState<any>(null);
 
-  useEffect(() => {
-    fetch(`https://api.github.com/users/${searchText}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data.message) {
-          setSearchResult([data]);
-        } else {
-          fetch(`https://api.github.com/search/users?q=${searchText}`)
+    useEffect(() => {
+        fetch(`https://api.github.com/users/${searchText}`)
             .then((response) => response.json())
-            .then((searchData) => {
-              setSearchResult(searchData.items);
+            .then((data) => {
+                if (!data.message) {
+                    setSearchResult([data]);
+                } else {
+                    fetch(`https://api.github.com/search/users?q=${searchText}`)
+                        .then((response) => response.json())
+                        .then((searchData) => {
+                            setSearchResult(searchData.items);
+                        });
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
             });
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, [searchText]);
+    }, [searchText]);
 
-  if (searchResult && searchResult.length === 1 && "name" in searchResult[0]) {return <Navigate to={`/profile/${searchResult[0].login}`} />;}
+    if (searchResult && searchResult.length === 1 && "name" in searchResult[0]) { return <Navigate to={`/profile/${searchResult[0].login}`} />; }
 
-  return (
-    <>
-      <SearchBar />
-      <Container>
-        <Title>Não encontramos esse repositório.</Title>
-        <Text>Talvez seja algum desses:</Text>
-        {searchResult &&
-          searchResult.map((result: any) => (
-            <UsersCard key={result.id} photo={result.avatar_url} login={result.login} />
-          ))}
-      </Container>
-    </>
-  );
+    return (
+        <>
+            <SearchBar />
+            <Container>
+                <Title>Não encontramos esse repositório.</Title>
+                <Text>Talvez seja algum desses:</Text>
+                {searchResult &&
+                    searchResult.map((result: any) => (
+                        <UsersCard key={result.id} photo={result.avatar_url} login={result.login} />
+                    ))}
+            </Container>
+        </>
+    );
 }
 
 export default Search;

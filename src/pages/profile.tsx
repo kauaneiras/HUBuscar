@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import SearchBar from '../components/searchBar';
 import RepoCard from '../components/repoCard';
+import colors from '../style/colors';
 
 const Profile: React.FC = () => {
     const { login } = useParams<{ login: string }>();
     const [data, setData] = useState<any>({});
-    const [repos, setRepos] = useState<any>([]); 
+    const [repos, setRepos] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
 
@@ -23,25 +24,21 @@ const Profile: React.FC = () => {
             .then((userData) => {
                 setData(userData);
                 setLoading(false);
-
+    
                 const storedUsers = JSON.parse(localStorage.getItem('storedUsers') || '[]');
-                const userExists = storedUsers.some((user: any) => user.login === userData.login);
-
-                if (!userExists) {
-                    storedUsers.push({
-                        login: userData.login,
-                        photo: userData.avatar_url,
-                        bio: userData.bio,
-                        location: userData.location
-                    });
-                    localStorage.setItem('storedUsers', JSON.stringify(storedUsers));
-                }
+    
+                const userIndex = storedUsers.findIndex((user: any) => user.login === userData.login);
+    
+                if (userIndex !== -1) {storedUsers.splice(userIndex, 1);}
+                storedUsers.push({login: userData.login,photo: userData.avatar_url,bio: userData.bio,location: userData.location});
+    
+                localStorage.setItem('storedUsers', JSON.stringify(storedUsers));
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
             });
     }, [login]);
-
+    
     useEffect(() => {
         fetch(`https://api.github.com/users/${login}/repos`)
             .then((response) => response.json())
@@ -55,7 +52,7 @@ const Profile: React.FC = () => {
     }, [login]);
 
     console.log(repos);
-    if (loading) {return <h1>Loading...</h1>;}
+    if (loading) { return <h1>Loading...</h1>; }
 
     return (
         <>
@@ -119,6 +116,7 @@ const Container = styled.div`
     justify-content: space-around;
     margin-top: 50px;
     padding: 0 50px;
+    background-color: ${colors.light.searchBarBackground};
 `;
 
 const UserInfos = styled.div<RepoInfosProps>`
@@ -171,8 +169,5 @@ const RepoInfos = styled.div<RepoInfosProps>`
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75); 
     padding: 40px;
 `;
-
-
-
 
 export default Profile;

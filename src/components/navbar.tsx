@@ -1,80 +1,91 @@
-import React, {useEffect, useState} from "react";
-import styled from "styled-components";
+import React from "react";
+import styled, {keyframes} from "styled-components";
 import { Link } from "react-router-dom";
+import colors from "../style/colors";
 
-const Navbar : React.FC = () => {
-    const [scroll, setScroll] = useState(false);
+interface NavBarProps { setNavbarOpen: (value: boolean) => void; }
 
-    useEffect(() => {
-        window.addEventListener("scroll", () => {
-            setScroll(window.scrollY > 50);
-        });
-    }, []);
+const Navbar: React.FC<NavBarProps> = ({ setNavbarOpen }) => {
+
 
     return (
-        <Nav scroll={scroll}>
-            <Logo href="/">Logo</Logo>
-            <NavLinks>
-                <Link to="/"><Butons>Inicio</Butons></Link>
-                <Link to="/about"><Butons>Sobre</Butons></Link>
-                <Link to="/history"><Butons>Buscas Recentes</Butons></Link>
-            </NavLinks>
-        </Nav>
+        <CoverScreen onClick={() => setNavbarOpen(false)}>
+            <Nav>
+                <NavLinks>
+                    <Link to="/"><Logo>HUBuscar</Logo></Link>
+                    <Link to="/history"><Butons>Buscas Recentes</Butons></Link>
+                </NavLinks>
+            </Nav>
+        </CoverScreen>
     );
 };
 
 export default Navbar;
 
-const Nav = styled.nav<{scroll: boolean}>`
-    position: fixed;
+const slideAnimation = keyframes`
+  from {transform: translateX(-100%);}
+  to {transform: translateX(0);}
+`;
+const CoverScreen = styled.div`
+    position: absolute;
     top: 0;
     left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index : 10;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+`;
+const Nav = styled.nav`
+    left: 0;
+    width: 20%;
+    height: 100%;
+    background-color: ${colors.backgroungNavBar};
+    animation: ${slideAnimation} 0.6s ease-in-out;
+`;
+
+const NavLinks = styled.ul`
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
     width: 100%;
-    height: 80px;
-    padding: 0 50px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: ${({scroll}) => (scroll ? "#fff" : "transparent")};
-    box-shadow: ${({scroll}) => (scroll ? "0 5px 10px rgba(0, 0, 0, 0.12)" : "none")};
-    transition: 0.4s;
-    z-index: 2;
+    height: 100%;
 `;
 
-const Logo = styled.a`
-    color: #000;
-    font-size: 35px;
+const Butons = styled.button`
+    background-color: #fff;
+    width: 100%;
+    height: 50px;
+    border: none;
+    font-size: 1.5rem;
     font-weight: 600;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-`;
-
-const NavLinks = styled.div`
-    height: 100%;
-    display: flex;
-    align-items: center;
-`;
-
-const Butons = styled.div`
-    display: flex;
-    align-items: center;
-    height: 100%;
-    padding: 0 1rem;
-    margin: 0 0.25rem;
-    font-weight: 500;
     color: #000;
-    text-decoration: none;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s ease-in-out;
+    &:hover {color: #fff; background-color: #0BA0E3;}
+`;
+
+const Logo = styled.div`
+    background-color: blue;
+    width: 100%;
+    height: 50px;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
     &:hover {
-        color: #000;
-    }
-    &:active {
-        color: #000;
-    }
-    &:last-child {
-        margin-right: 0;
+        color: #fff;
+        background-color: red;
+
     }
 `;
+
+
+
 
