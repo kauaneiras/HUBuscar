@@ -2,20 +2,24 @@
 
 import styled from 'styled-components';
 import { useState } from 'react';
+import SearchBar from '../components/searchBar';
 
 export default function Home() {
     const [count, setCount] = useState(0);
     return (
+        <><SearchBar />
         <Container>
+            
             <Title>Home</Title>
             <SubTitle>Contador: {count}</SubTitle>
             <Button onClick={() => setCount((count) => count + 1)}>Clique aqui</Button>
         </Container>
+        </>
     );
 }
 
 const Container = styled.div`
-    background-color: black;
+    background-color: #e5e5e5;
     width: 100vw;
     height: 100vh;
     display: flex;
