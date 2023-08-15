@@ -1,20 +1,21 @@
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import UsersCard from "../components/usersCard";
+import SearchBar from "../components/searchBar";
 import styled from "styled-components";
 
-export default function Search() {
+
+const Search: React.FC = () => {
   const { searchText } = useParams();
   const [searchResult, setSearchResult] = useState<any>(null);
 
   useEffect(() => {
-    // Fazendo a primeira requisição para obter detalhes do usuário diretamente
     fetch(`https://api.github.com/users/${searchText}`)
       .then((response) => response.json())
       .then((data) => {
         if (!data.message) {
           setSearchResult([data]);
         } else {
-          // Se não encontrar diretamente, fazer a pesquisa de usuários
           fetch(`https://api.github.com/search/users?q=${searchText}`)
             .then((response) => response.json())
             .then((searchData) => {
@@ -27,55 +28,44 @@ export default function Search() {
       });
   }, [searchText]);
 
+  if (searchResult && searchResult.length === 1 && "name" in searchResult[0]) {return <Navigate to={`/profile/${searchResult[0].login}`} />;}
+
   return (
-    <div>
-      {searchResult &&
-        searchResult.map((user: any) => (
-          <UserDetails key={user.id}>
-            <img src={user.avatar_url} alt={`${user.login} Avatar`} />
-            <h2>{user.name}</h2>
-            <p>Username: {user.login}</p>
-            {user.location && <p>Location: {user.location}</p>}
-            {user.followers && <p>Followers: {user.followers}</p>}
-            {user.following && <p>Following: {user.following}</p>}
-            {user.public_repos && <p>Public Repos: {user.public_repos}</p>}
-            <a href={user.html_url}>Profile</a>
-          </UserDetails>
-        ))}
-    </div>
+    <>
+      <SearchBar />
+      <Container>
+        <Title>Não encontramos esse repositório.</Title>
+        <Text>Talvez seja algum desses:</Text>
+        {searchResult &&
+          searchResult.map((result: any) => (
+            <UsersCard key={result.id} photo={result.avatar_url} login={result.login} />
+          ))}
+      </Container>
+    </>
   );
 }
 
+export default Search;
 
-const UserDetails = styled.div`
-  text-align: center;
-
-  img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin: 10px auto;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-    margin: 10px 0;
-  }
-
-  p {
-    font-size: 1.2rem;
-  }
-
-  a {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-  }
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
 `;
 
+const Title = styled.p`
+    font-size: 30px;
+    font-weight: 700;
+    color: #000000;
+    margin-top: 30px;
+`;
 
-
+const Text = styled.p`
+font-size: 25px;
+font-weight: 500;
+color: #000000;
+margin-top: 10px;
+margin-bottom: 30px;
+`;

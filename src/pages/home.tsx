@@ -1,10 +1,9 @@
-//criar função home, que retorna uma pagina preta escrito home no centro em vermelho
-
 import styled from 'styled-components';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import SearchBar from '../components/searchBar';
 
-export default function Home() {
+
+const Home: React.FC = () => {
     const [count, setCount] = useState(0);
     return (
         <><SearchBar />
@@ -17,6 +16,8 @@ export default function Home() {
         </>
     );
 }
+
+export default Home;
 
 const Container = styled.div`
     background-color: #e5e5e5;

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import lupa from '../assets/imgs/lupa.png';
 import menu from '../assets/imgs/menu.png';
 
-export default function SearchBar() {
+const SearchBar: React.FC = () => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [searchText, setSearchText] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
@@ -56,9 +56,12 @@ export default function SearchBar() {
     );
   };
 
+export default SearchBar;
+
 const SearchBarAndSuggestionContainer = styled.div`
     display: flex;
     flex-direction: column;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75); 
 `;
 
 const AlignSuggestion = styled.div`
@@ -125,12 +128,13 @@ const Input = styled.input<{ isExpanded: boolean }>`
     outline: none;
     font-size: 20px;
     transition: 0.3s;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
     background-color: transparent;
 `;
 
 const ClearButton = styled.button`
     background-color: transparent;
+    height: 30px;
+    width: 60px;
     border: none;
     outline: none;
     cursor: pointer;
