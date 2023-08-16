@@ -1,8 +1,7 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-
 import Forks from '../assets/imgs/fork.png';
 import Stars from '../assets/imgs/stars.webp';
 
@@ -22,16 +21,23 @@ interface RepoCardProps {
 
 const RepoCard: React.FC<RepoCardProps> = (props) => {
     function formatDate(i: string): string { const date = new Date(i); return format(date, 'dd MMM yyyy'); }
+    const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
+
+    useEffect(() => {
+        const updateScreenWidth = () => { setScreenWidth(window.innerWidth); }
+        window.addEventListener('resize', updateScreenWidth);
+        return () => { window.removeEventListener('resize', updateScreenWidth); }
+    }, []);
 
     return (
         <Link to={`https://github.com/${props.login}/${props.name}`} style={{ textDecoration: 'none', color: '#000' }}>
             <Card>
-                <Name>💾 {props.name}<ForksAndStars><img src={Forks} alt="forks" /> {props.forks} | <img src={Stars} alt="stars" /> {props.stars}</ForksAndStars></Name>
-                <Description>{props.description}</Description>
+                <Name screenWidth={screenWidth}>💾 {props.name}<ForksAndStars screenWidth={screenWidth}><img src={Forks} alt="forks" /> {props.forks} | <img src={Stars} alt="stars" /> {props.stars}</ForksAndStars></Name>
+                <Description screenWidth={screenWidth}>{props.description}</Description>
                 <Language style={{color: generateRandomColor()}}>💻 {props.language}</Language>
-                <MoreInfo>
-                    <Created_at>🌐 Criado em: {formatDate(props.created_at)}</Created_at>
-                    <Update_at>🕜 Atualizado: {formatDate(props.update_at)} </Update_at>
+                <MoreInfo screenWidth={screenWidth}>
+                    <Created_at  screenWidth={screenWidth}>🌐 Criado em: {formatDate(props.created_at)}</Created_at>
+                    <Update_at  screenWidth={screenWidth}>🕜 Atualizado: {formatDate(props.update_at)} </Update_at>
                 </MoreInfo>
             </Card>
         </Link>
@@ -41,11 +47,31 @@ const RepoCard: React.FC<RepoCardProps> = (props) => {
 export default RepoCard;
 
 //-------------------------------------------- Styled Components --------------------------------------------------//
+interface RepoInfosProps { screenWidth: any; }
 
-const Name = styled.p`font-weight: 700; margin: 10px 0; font-size: 25px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 100%;`;
-const Description = styled.p`margin: 10px 0;`;
-const Created_at = styled.p`margin: 10px 0; font-size: 15px; font-weight: 700;`;
-const Update_at = styled.p`margin: 10px 0; font-size: 15px; font-weight: 700;`;
+const Name = styled.p<RepoInfosProps>`
+    font-weight: 700; margin: 10px 0; 
+    font-size: ${({ screenWidth }) => (screenWidth < 600 ? '15px' : '20px')};
+    display: flex; 
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: space-between; 
+    width: 100%;
+`;
+const Description = styled.p<RepoInfosProps>`
+    margin: 10px 0;
+    font-size: ${({ screenWidth }) => (screenWidth < 600 ? '10px' : '15px')};
+`;
+const Created_at = styled.p <RepoInfosProps>`
+    margin: 10px 0; 
+    font-weight: 700;
+    font-size: ${({ screenWidth }) => (screenWidth < 600 ? '10px' : '15px')};
+`;
+const Update_at = styled.p<RepoInfosProps>`
+    margin: 10px 0; 
+    font-size: ${({ screenWidth }) => (screenWidth < 600 ? '10px' : '15px')};
+    font-weight: 700;
+`;
 const Language = styled.p`margin: 10px 0; font-size: 15px; font-weight: 700;`;
 const Card = styled.div`
     display: flex;
@@ -70,7 +96,7 @@ const Card = styled.div`
         background-color: ${colors.repoCardsBackgroundHover};
     }
 `;
-const MoreInfo = styled.div`
+const MoreInfo = styled.div<RepoInfosProps>`
     background-color: ${colors.repoCardsMoreInfoBackground};
     display: flex;
     flex-direction: row;
@@ -83,14 +109,14 @@ const MoreInfo = styled.div`
     margin: 20px 0;
     padding: 20px;
     font-family: 'Roboto', sans-serif;
-    font-size: 20px;
+    font-size: ${({ screenWidth }) => (screenWidth < 600 ? '5px' : '20px')};
     color: #000;
     text-align: center;
     overflow: hidden;'
    
 `;
-const ForksAndStars = styled.div`
-    display: flex;
+const ForksAndStars = styled.div<RepoInfosProps>`
+    display: ${({ screenWidth }) => (screenWidth < 600 ? 'none' : 'flex')};
     flex-direction: row;
     align-items: center;
     justify-content: space-between;

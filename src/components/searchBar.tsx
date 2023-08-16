@@ -138,13 +138,15 @@ const SearchIconContainer = styled.button<{ isExpanded: boolean }>`
     width: ${props => (props.isExpanded ? '100%' : '50px')};
     height: 50px;
     border-radius: 25px;
-    background-color: ${colors.backgroundSearchBarInput};
+    background-color: ${props => (props.isExpanded ? colors.backgroundSearchBarInput : colors.backgroundSearchBar)};
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: ${(props) => (props.isExpanded ? '0.6s' : 'none')};
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: ${(props) => (props.isExpanded ? '0px 0px 5px rgba(0, 0, 0, 0.3)' : 'none')};
+    border: ${(props) => (props.isExpanded ? '1px solid #ccc' : 'none')};
+    &:hover {background-color: ${colors.backgroundSearchBarInput};}   
 `;
 const Input = styled.input<{ isExpanded: boolean }>`
     width: ${props => (props.isExpanded ? 'calc(100% - 40px)' : '0')};

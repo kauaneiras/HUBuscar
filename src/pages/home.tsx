@@ -9,7 +9,7 @@ const Home: React.FC = () => {
     return (
         <>
             <SearchBar />
-            <Container><img src={bemvindo} alt="bem vindo" /></Container>
+            <Container><img src={bemvindo} alt="bem vindo" style={{objectFit: 'contain',}}/></Container>
         </>
     );
 }

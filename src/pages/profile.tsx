@@ -5,6 +5,7 @@ import SearchBar from '../components/searchBar';
 import RepoCard from '../components/repoCard';
 import colors from '../style/colors';
 import LoadingImg from '../assets/imgs/Loading.gif'
+import filterRepos from '../utils/filterRepos';
 
 const Profile: React.FC = () => {
     const { login } = useParams<{ login: string }>();
@@ -12,6 +13,7 @@ const Profile: React.FC = () => {
     const [repos, setRepos] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
+    const [filtering, setFiltering] = useState<string>('recent_update');
 
     useEffect(() => {
         const updateScreenWidth = () => { setScreenWidth(window.innerWidth); }
@@ -23,37 +25,27 @@ const Profile: React.FC = () => {
         fetch(`https://api.github.com/users/${login}`)
             .then((response) => response.json())
             .then((userData) => {
-                setData(userData);
-                setLoading(false);
-    
+                setData(userData); setLoading(false);
                 const storedUsers = JSON.parse(localStorage.getItem('storedUsers') || '[]');
-    
                 const userIndex = storedUsers.findIndex((user: any) => user.login === userData.login);
-    
-                if (userIndex !== -1) {storedUsers.splice(userIndex, 1);}
-                storedUsers.push({login: userData.login,photo: userData.avatar_url,bio: userData.bio,location: userData.location});
-    
+                if (userIndex !== -1) { storedUsers.splice(userIndex, 1); }
+                storedUsers.push({ login: userData.login, photo: userData.avatar_url, bio: userData.bio, location: userData.location, email: userData.email, followers: userData.followers, following: userData.following });
                 localStorage.setItem('storedUsers', JSON.stringify(storedUsers));
             })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
+            .catch((error) => {console.error("Error fetching data:", error);});
     }, [login]);
-    
+
     useEffect(() => {
         fetch(`https://api.github.com/users/${login}/repos`)
             .then((response) => response.json())
-            .then((reposData) => {
-                setRepos(reposData);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
+            .then((reposData) => {setRepos(reposData); setLoading(false);})
+            .catch((error) => {console.error("Error fetching data:", error);});
     }, [login]);
 
-    console.log(repos);
     if (loading) { return <LoadingImageStyled src={LoadingImg} alt="" />; }
+
+    const sortedRepos = filterRepos(repos, filtering);
+    const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => { setFiltering(event.target.value); };
 
     return (
         <>
@@ -69,11 +61,24 @@ const Profile: React.FC = () => {
                         <UserEmail>📧 {data.email}</UserEmail>
                         <UserFollowers>🔹 Seguidores: {data.followers}</UserFollowers>
                         <UserFollowing>🔹 Seguindo: {data.following}</UserFollowing>
-                        <Link to={`https://github.com/${login}`}><GoToGitHub>Ver no GitHub</GoToGitHub></Link>
+                        <Link to={`https://github.com/${login}`} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                            <GoToGitHub>Ver no GitHub</GoToGitHub>
+                        </Link>
                     </UserInfosTexts>
                 </UserInfos>
                 <RepoInfos screenWidth={screenWidth}>
-                    {repos.map((repo: any) => (
+                    <FilterSelectContainer>
+                        <FilterSelect onChange={handleFilterChange}>
+                            <option value="last_created">Criado por Ultimo</option>
+                            <option value="created_first">Criado Primeiro</option>
+                            <option value="recent_update">Atualizado Recente</option>
+                            <option value="less_update">Não Atualizado</option>
+                            <option value="name">Nome do Repositorio</option>
+                            <option value="stars">Stars</option>
+                            <option value="forks">Forks</option>
+                        </FilterSelect>
+                    </FilterSelectContainer>
+                    {sortedRepos.map((repo: any) => (
                         <RepoCard
                             key={repo.id}
                             login={data.login}
@@ -118,7 +123,6 @@ const UserInfos = styled.div<RepoInfosProps>`
     border-radius: 10px;
     background-color: #f2f2f2;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
-    padding: 40px;
     margin-bottom: 40px;
 `;
 const UserInfosTexts = styled.div`
@@ -132,11 +136,18 @@ const UserInfosTexts = styled.div`
 `;
 const GoToGitHub = styled.button`
     text-decoration: none;
-    color: #000;
-    background-color: #f2f2f2;
-    font-size: 20px;
+    color: white;
+    background-color: #00BAEA;
+    font-size: 15px;
+    font-weight: 700;
     margin-top: 10px;
-    &:hover { color: #000; text-decoration: underline;}
+    border: none;
+    margin-top: 20px;
+    height: 50px;
+    width: 150px;
+    border-radius: 10px;
+    center: 0;
+    &:hover {background-color: #00A0D8; cursor: pointer;}
 `;
 const RepoInfos = styled.div<RepoInfosProps>`
     display: flex;
@@ -158,6 +169,79 @@ const LoadingImageStyled = styled.img`
     top: 40%;
     left: 40%;
     `;
+const FilterSelectContainer = styled.div`
+    display: flex;
+    justify-content: flex-end;
+  `;
+const FilterSelect = styled.select`
+    width: 200px;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    background-color: #f2f2f2;
+    font-size: 15px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-right: 20px;
+    padding-left: 10px;
+    &:hover { background-color: #e6e6e6; }
+    &:active { background-color: #d9d9d9; }
+    &:focus { background-color: #d9d9d9; }
+`;
+
+const SearchContainer = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    `;
+
+const SearchInput = styled.input`
+    width: 200px;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    background-color: #f2f2f2;
+    font-size: 15px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-right: 20px;
+    padding-left: 10px;
+    &:hover { background-color: #e6e6e6; }
+    &:active { background-color: #d9d9d9; }
+    &:focus { background-color: #d9d9d9; }
+`;
+
+const SearchButton = styled.button`
+    width: 100px;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    background-color: #f2f2f2;
+    font-size: 15px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-right: 20px;
+    padding-left: 10px;
+    &:hover { background-color: #e6e6e6; }
+    &:active { background-color: #d9d9d9; }
+    &:focus { background-color: #d9d9d9; }
+`;
+
+const ClearButton = styled.button`
+    width: 100px;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    background-color: #f2f2f2;
+    font-size: 15px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-right: 20px;
+    padding-left: 10px;
+    &:hover { background-color: #e6e6e6; }
+    &:active { background-color: #d9d9d9; }
+    &:focus { background-color: #d9d9d9; }
+`;
+
 const UserPhoto = styled.img`width: 80%; height: auto; border-radius: 50%; `; //arrumar de forma que a imagem fique inteira
 const UserName = styled.h1`font-size: 30px; margin-top: 20px;`;
 const UserLogin = styled.h2`font-size: 20px; margin-top: 10px;`;
@@ -167,3 +251,5 @@ const UserEmail = styled.p`font-size: 15px; margin-top: 10px;`;
 const UserFollowers = styled.p`font-size: 15px; margin-top: 10px;`;
 const UserFollowing = styled.p`font-size: 15px; margin-top: 10px;`;
 export default Profile;
+
+

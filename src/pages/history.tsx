@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 
 import UsersCardHistory from '../components/usersCardHistory';
@@ -10,10 +10,18 @@ interface UserHistory { login: string; photo: string; bio: any; location: string
 const History: React.FC = () => {
     const storedUsers = (JSON.parse(localStorage.getItem('storedUsers') || '[]') as UserHistory[]).reverse();
     console.log(storedUsers);
+    const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
+
+    useEffect(() => {
+        const updateScreenWidth = () => { setScreenWidth(window.innerWidth); }
+        window.addEventListener('resize', updateScreenWidth);
+        return () => { window.removeEventListener('resize', updateScreenWidth); }
+    }, []);
+
     return (
         <>
             <SearchBar />
-            <Container>
+            <Container screenWidth={screenWidth}>
                 <h1>Suas Pesquisas Recentes 🔍</h1>
                 {storedUsers.map((user, index) => (<UsersCardHistory key={index} login={user.login} bio={user.bio} photo={user.photo} location={user.location} />))}
             </Container>
@@ -22,7 +30,10 @@ const History: React.FC = () => {
 };
 export default History;
 
-const Container = styled.div`
+interface RepoInfosProps { screenWidth: any; }
+
+
+const Container = styled.div<RepoInfosProps>`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,6 +41,8 @@ const Container = styled.div`
     height: 100%;
     width: 100vw;
     background-color:${colors.background};
-    h1{margin: 20px;}
+    h1{
+        margin: 20px;
+        font-size: ${({ screenWidth }) => (screenWidth < 600 ? '25px' : '30px')};
+    }
 `;
-

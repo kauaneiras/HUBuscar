@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -13,12 +13,19 @@ const UsersCardHistory: React.FC<UsersCardHistoryProps> = (props) => {
             localStorage.setItem('users', JSON.stringify(storedUsers));
         }
     };
+    const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
+
+    useEffect(() => {
+        const updateScreenWidth = () => { setScreenWidth(window.innerWidth); }
+        window.addEventListener('resize', updateScreenWidth);
+        return () => { window.removeEventListener('resize', updateScreenWidth); }
+    }, []);
 
     return (
         <Link to={`/profile/${props.login}`}
             style={{ textDecoration: 'none', color: '#000' }}
             onClick={handleLinkClick}>
-            <Card>
+            <Card screenWidth={screenWidth}>
                 <UserImg src={props.photo} alt="user" />
                 <Container>
                 <UserName>➜ {props.login}</UserName>
@@ -32,17 +39,19 @@ const UsersCardHistory: React.FC<UsersCardHistoryProps> = (props) => {
 
 export default UsersCardHistory;
 
-const Card = styled.div`
+interface RepoInfosProps { screenWidth: any; }
+
+const Card = styled.div<RepoInfosProps>`
     display: flex;
-    flex-direction: row;
+    flex-direction: ${({ screenWidth }) => (screenWidth < 800 ? 'column' : 'row')};
     align-items: center;
     justify-content: center;
-    width: 60vw;
+    width: ${({ screenWidth }) => (screenWidth < 600 ? '80vw' : '60vw')};
     height: auto;
     border-radius: 10px;
     box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.2);
     margin: 20px 0;
-    padding: 20px;
+    padding: 10px;
     font-family: 'Roboto', sans-serif;
     font-size: 20px;
     color: #000;
