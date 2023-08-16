@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import SearchBar from '../components/searchBar';
 import RepoCard from '../components/repoCard';
 import colors from '../style/colors';
+import LoadingImg from '../assets/imgs/Loading.gif'
 
 const Profile: React.FC = () => {
     const { login } = useParams<{ login: string }>();
@@ -52,7 +53,7 @@ const Profile: React.FC = () => {
     }, [login]);
 
     console.log(repos);
-    if (loading) { return <h1>Loading...</h1>; }
+    if (loading) { return <LoadingImageStyled src={LoadingImg} alt="" />; }
 
     return (
         <>
@@ -60,25 +61,14 @@ const Profile: React.FC = () => {
             <Container>
                 <UserInfos screenWidth={screenWidth}>
                     <UserPhoto src={data.avatar_url} alt="Foto de perfil" />
-
                     <UserInfosTexts>
                         <UserName>{data.name}</UserName>
-                        <UserLogin>{data.login}</UserLogin>
+                        <UserLogin>🌐 {data.login}</UserLogin>
                         <UserBio>{data.bio}</UserBio>
-                        <UserLocation>{data.location}</UserLocation>
-                        <UserEmail>{data.email}</UserEmail>
-                        <UserFollowers>{data.followers}</UserFollowers>
-                        <UserFollowing>{data.following}</UserFollowing>
-
-                        {/* <UserPhoto src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoWkjPpfBCjY8AOZ1PBilxSpfNWnFUdlT5QlGAqcTwkw&s" alt="Foto de perfil" />
-                        <UserName>juju</UserName>
-                        <UserLogin>jujujuju</UserLogin>
-                        <UserBio>Sou dev</UserBio>
-                        <UserLocation>Brasilia</UserLocation>
-                        <UserEmail>juju@email.com</UserEmail>
-                        <UserFollowers>43</UserFollowers>
-                        <UserFollowing>45</UserFollowing> */}
-
+                        <UserLocation>📌 {data.location}</UserLocation>
+                        <UserEmail>📧 {data.email}</UserEmail>
+                        <UserFollowers>🔹 Seguidores: {data.followers}</UserFollowers>
+                        <UserFollowing>🔹 Seguindo: {data.following}</UserFollowing>
                         <Link to={`https://github.com/${login}`}><GoToGitHub>Ver no GitHub</GoToGitHub></Link>
                     </UserInfosTexts>
                 </UserInfos>
@@ -108,17 +98,15 @@ interface RepoInfosProps { screenWidth: number; }
 
 const Container = styled.div`
     display: flex;  
-    height: 100vh;
+    height: 100%;
     width: 100vw;
     flex-wrap: wrap;
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-around;
-    margin-top: 50px;
-    padding: 0 50px;
+    padding: 50px;
     background-color: ${colors.background};
 `;
-
 const UserInfos = styled.div<RepoInfosProps>`
     display: flex;
     height: 80%;
@@ -131,25 +119,17 @@ const UserInfos = styled.div<RepoInfosProps>`
     background-color: #f2f2f2;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
     padding: 40px;
+    margin-bottom: 40px;
 `;
-
 const UserInfosTexts = styled.div`
     display: flex;
     height: 100%;
     width: 100%;
+    padding: 50px;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
 `;
-const UserPhoto = styled.img`width: 80%; height: auto; border-radius: 50%; `; //arrumar de forma que a imagem fique inteira
-const UserName = styled.h1`font-size: 30px; margin-top: 20px;`;
-const UserLogin = styled.h2`font-size: 20px; margin-top: 10px;`;
-const UserBio = styled.p`font-size: 15px; margin-top: 10px;`;
-const UserLocation = styled.p`font-size: 15px; margin-top: 10px;`;
-const UserEmail = styled.p`font-size: 15px; margin-top: 10px;`;
-const UserFollowers = styled.p`font-size: 15px; margin-top: 10px;`;
-const UserFollowing = styled.p`font-size: 15px; margin-top: 10px;`;
-
 const GoToGitHub = styled.button`
     text-decoration: none;
     color: #000;
@@ -158,7 +138,6 @@ const GoToGitHub = styled.button`
     margin-top: 10px;
     &:hover { color: #000; text-decoration: underline;}
 `;
-
 const RepoInfos = styled.div<RepoInfosProps>`
     display: flex;
     height: auto;
@@ -169,5 +148,22 @@ const RepoInfos = styled.div<RepoInfosProps>`
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75); 
     padding: 40px;
 `;
-
+const LoadingImageStyled = styled.img`
+    width: 40%; 
+    height: 40%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 40%;
+    left: 40%;
+    `;
+const UserPhoto = styled.img`width: 80%; height: auto; border-radius: 50%; `; //arrumar de forma que a imagem fique inteira
+const UserName = styled.h1`font-size: 30px; margin-top: 20px;`;
+const UserLogin = styled.h2`font-size: 20px; margin-top: 10px;`;
+const UserBio = styled.p`font-size: 15px; margin-top: 10px;`;
+const UserLocation = styled.p`font-size: 15px; margin-top: 10px;`;
+const UserEmail = styled.p`font-size: 15px; margin-top: 10px;`;
+const UserFollowers = styled.p`font-size: 15px; margin-top: 10px;`;
+const UserFollowing = styled.p`font-size: 15px; margin-top: 10px;`;
 export default Profile;
