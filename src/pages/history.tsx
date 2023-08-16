@@ -6,10 +6,9 @@ import SearchBar from '../components/searchBar';
 
 import colors from '../style/colors';
 
-interface UserHistory { login: string; photo: string; bio: any; location: string; }
+interface UserHistory { login: string; photo: string; bio: any; location: string; email: string; }
 const History: React.FC = () => {
     const storedUsers = (JSON.parse(localStorage.getItem('storedUsers') || '[]') as UserHistory[]).reverse();
-    console.log(storedUsers);
     const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
 
     useEffect(() => {
@@ -23,7 +22,7 @@ const History: React.FC = () => {
             <SearchBar />
             <Container screenWidth={screenWidth}>
                 <h1>Suas Pesquisas Recentes 🔍</h1>
-                {storedUsers.map((user, index) => (<UsersCardHistory key={index} login={user.login} bio={user.bio} photo={user.photo} location={user.location} />))}
+                {storedUsers.map((user, index) => (<UsersCardHistory key={index} login={user.login} bio={user.bio} photo={user.photo} location={user.location} email={user.email}/>))}
             </Container>
         </>
     );
@@ -31,7 +30,6 @@ const History: React.FC = () => {
 export default History;
 
 interface RepoInfosProps { screenWidth: any; }
-
 
 const Container = styled.div<RepoInfosProps>`
     display: flex;
@@ -41,8 +39,5 @@ const Container = styled.div<RepoInfosProps>`
     height: 100%;
     width: 100vw;
     background-color:${colors.background};
-    h1{
-        margin: 20px;
-        font-size: ${({ screenWidth }) => (screenWidth < 600 ? '25px' : '30px')};
-    }
+    h1{ margin: 20px; font-size: ${({ screenWidth }) => (screenWidth < 600 ? '25px' : '30px')}; }
 `;

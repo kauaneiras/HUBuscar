@@ -5,6 +5,8 @@ import SearchBar from '../components/searchBar';
 import RepoCard from '../components/repoCard';
 import colors from '../style/colors';
 import LoadingImg from '../assets/imgs/Loading.gif'
+import LoadingMobile from '../assets/imgs/LoadingMobile.gif'
+import ReposLoading from '../assets/imgs/ReposLoading.gif'
 import filterRepos from '../utils/filterRepos';
 
 const Profile: React.FC = () => {
@@ -12,6 +14,7 @@ const Profile: React.FC = () => {
     const [data, setData] = useState<any>({});
     const [repos, setRepos] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [loadingRepos, setLoadingRepos] = useState<boolean>(true);
     const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
     const [filtering, setFiltering] = useState<string>('recent_update');
 
@@ -32,21 +35,20 @@ const Profile: React.FC = () => {
                 storedUsers.push({ login: userData.login, photo: userData.avatar_url, bio: userData.bio, location: userData.location, email: userData.email, followers: userData.followers, following: userData.following });
                 localStorage.setItem('storedUsers', JSON.stringify(storedUsers));
             })
-            .catch((error) => {console.error("Error fetching data:", error);});
+            .catch((error) => { console.error("Error fetching data:", error); });
     }, [login]);
 
     useEffect(() => {
         fetch(`https://api.github.com/users/${login}/repos`)
             .then((response) => response.json())
-            .then((reposData) => {setRepos(reposData); setLoading(false);})
-            .catch((error) => {console.error("Error fetching data:", error);});
+            .then((reposData) => { setRepos(reposData); setLoadingRepos(false); })
+            .catch((error) => { console.error("Error fetching data:", error); });
     }, [login]);
 
-    if (loading) { return <LoadingImageStyled src={LoadingImg} alt="" />; }
-
+    if (loading) { screenWidth < 850 ? <LoadingImageStyled src={LoadingMobile} alt="Loading" /> : <LoadingImageStyled src={LoadingImg} alt="Loading" />; }
     const sortedRepos = filterRepos(repos, filtering);
     const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => { setFiltering(event.target.value); };
-
+    console.log('USER: ', data)
     return (
         <>
             <SearchBar />
@@ -61,37 +63,41 @@ const Profile: React.FC = () => {
                         <UserEmail>📧 {data.email}</UserEmail>
                         <UserFollowers>🔹 Seguidores: {data.followers}</UserFollowers>
                         <UserFollowing>🔹 Seguindo: {data.following}</UserFollowing>
-                        <Link to={`https://github.com/${login}`} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                        <Link to={`https://github.com/${login}`} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <GoToGitHub>Ver no GitHub</GoToGitHub>
                         </Link>
                     </UserInfosTexts>
                 </UserInfos>
                 <RepoInfos screenWidth={screenWidth}>
-                    <FilterSelectContainer>
-                        <FilterSelect onChange={handleFilterChange}>
-                            <option value="last_created">Criado por Ultimo</option>
-                            <option value="created_first">Criado Primeiro</option>
-                            <option value="recent_update">Atualizado Recente</option>
-                            <option value="less_update">Não Atualizado</option>
-                            <option value="name">Nome do Repositorio</option>
-                            <option value="stars">Stars</option>
-                            <option value="forks">Forks</option>
-                        </FilterSelect>
-                    </FilterSelectContainer>
-                    {sortedRepos.map((repo: any) => (
-                        <RepoCard
-                            key={repo.id}
-                            login={data.login}
-                            name={repo.name}
-                            description={repo.description}
-                            language={repo.language}
-                            stars={repo.stargazers_count}
-                            forks={repo.forks}
-                            link={repo.html_url}
-                            created_at={repo.created_at}
-                            update_at={repo.updated_at}
-                        />
-                    ))}
+                    {loadingRepos ? <LoadingRepoImageStyled src={ReposLoading} alt="Loading" /> :
+                        <div>
+                            <FilterSelectContainer>
+                                <FilterSelect onChange={handleFilterChange}>
+                                    <option value="last_created">Criado por Ultimo</option>
+                                    <option value="created_first">Criado Primeiro</option>
+                                    <option value="recent_update">Atualizado Recente</option>
+                                    <option value="less_update">Não Atualizado</option>
+                                    <option value="name">Nome do Repositorio</option>
+                                    <option value="stars">Stars</option>
+                                    <option value="forks">Forks</option>
+                                </FilterSelect>
+                            </FilterSelectContainer>
+                            {sortedRepos.map((repo: any) => (
+                                <RepoCard
+                                    key={repo.id}
+                                    login={data.login}
+                                    name={repo.name}
+                                    description={repo.description}
+                                    language={repo.language}
+                                    stars={repo.stargazers_count}
+                                    forks={repo.forks}
+                                    link={repo.html_url}
+                                    created_at={repo.created_at}
+                                    update_at={repo.updated_at}
+                                />
+                            ))}
+                        </div>
+                    }
                 </RepoInfos>
             </Container>
         </>
@@ -168,6 +174,7 @@ const LoadingImageStyled = styled.img`
     align-items: center;
     top: 40%;
     left: 40%;
+    object-fit: contain;
     `;
 const FilterSelectContainer = styled.div`
     display: flex;
@@ -189,58 +196,14 @@ const FilterSelect = styled.select`
     &:focus { background-color: #d9d9d9; }
 `;
 
-const SearchContainer = styled.div`
+const LoadingRepoImageStyled = styled.img`
+    width: 40%; 
+    height: 40%;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
+    object-fit: contain;
     `;
-
-const SearchInput = styled.input`
-    width: 200px;
-    height: 30px;
-    border-radius: 5px;
-    border: none;
-    background-color: #f2f2f2;
-    font-size: 15px;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    margin-right: 20px;
-    padding-left: 10px;
-    &:hover { background-color: #e6e6e6; }
-    &:active { background-color: #d9d9d9; }
-    &:focus { background-color: #d9d9d9; }
-`;
-
-const SearchButton = styled.button`
-    width: 100px;
-    height: 30px;
-    border-radius: 5px;
-    border: none;
-    background-color: #f2f2f2;
-    font-size: 15px;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    margin-right: 20px;
-    padding-left: 10px;
-    &:hover { background-color: #e6e6e6; }
-    &:active { background-color: #d9d9d9; }
-    &:focus { background-color: #d9d9d9; }
-`;
-
-const ClearButton = styled.button`
-    width: 100px;
-    height: 30px;
-    border-radius: 5px;
-    border: none;
-    background-color: #f2f2f2;
-    font-size: 15px;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    margin-right: 20px;
-    padding-left: 10px;
-    &:hover { background-color: #e6e6e6; }
-    &:active { background-color: #d9d9d9; }
-    &:focus { background-color: #d9d9d9; }
-`;
 
 const UserPhoto = styled.img`width: 80%; height: auto; border-radius: 50%; `; //arrumar de forma que a imagem fique inteira
 const UserName = styled.h1`font-size: 30px; margin-top: 20px;`;

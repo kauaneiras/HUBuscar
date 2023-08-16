@@ -1,25 +1,29 @@
 import { useParams, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import UsersCard from "../components/usersCard";
-import SearchBar from "../components/searchBar";
 import styled from "styled-components";
 
+import UsersCard from "../components/usersCard";
+import SearchBar from "../components/searchBar";
+
+import LoadingImg from "../assets/imgs/Loading.gif";
 
 const Search: React.FC = () => {
     const { searchText } = useParams();
     const [searchResult, setSearchResult] = useState<any>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+
 
     useEffect(() => {
         fetch(`https://api.github.com/users/${searchText}`)
             .then((response) => response.json())
             .then((data) => {
                 if (!data.message) {
-                    setSearchResult([data]);
+                    setSearchResult([data]); setLoading(false);
                 } else {
                     fetch(`https://api.github.com/search/users?q=${searchText}`)
                         .then((response) => response.json())
                         .then((searchData) => {
-                            setSearchResult(searchData.items);
+                            setSearchResult(searchData.items); setLoading(false);
                         });
                 }
             })
@@ -29,7 +33,7 @@ const Search: React.FC = () => {
     }, [searchText]);
 
     if (searchResult && searchResult.length === 1 && "name" in searchResult[0]) { return <Navigate to={`/profile/${searchResult[0].login}`} />; }
-
+    if (loading) { return <LoadingImageStyled src={LoadingImg} alt="Loading" />; }
     return (
         <>
             <SearchBar />
@@ -52,6 +56,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
   margin-top: 30px;
 `;
 
@@ -69,3 +74,15 @@ color: #000000;
 margin-top: 10px;
 margin-bottom: 30px;
 `;
+
+const LoadingImageStyled = styled.img`
+    width: 40%; 
+    height: 40%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 40%;
+    left: 30%;
+    object-fit: contain;
+    `;

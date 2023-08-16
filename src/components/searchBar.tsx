@@ -63,7 +63,7 @@ const SearchBar: React.FC = () => {
                             onKeyDown={handleKeyDown}
                             placeholder="Pesquise por um usuário"
                         />
-                        {searchText && (
+                        {searchText &&  (
                             <ClearButton
                                 onClick={() => {
                                     setSearchText("");

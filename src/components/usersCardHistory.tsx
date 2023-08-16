@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-interface UsersCardHistoryProps {login: string; photo: string; bio: any; location: string;}
+interface UsersCardHistoryProps {login: string; photo: string; bio: any; location: string; email: string;}
 const UsersCardHistory: React.FC<UsersCardHistoryProps> = (props) => {
     const handleLinkClick = () => {
         const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
@@ -30,6 +30,7 @@ const UsersCardHistory: React.FC<UsersCardHistoryProps> = (props) => {
                 <Container>
                 <UserName>➜ {props.login}</UserName>
                 <UserBio>{props.bio}</UserBio>
+                <UserEmail>📧 {props.email}</UserEmail>
                 <UserLocation>📌 {props.location}</UserLocation>
                 </Container>
             </Card>
@@ -80,3 +81,4 @@ const UserImg = styled.img`
 const UserName = styled.p`font-weight: bold; margin: 10px 0; font-size: 25px;`;
 const UserBio = styled.p`margin: 10px 0; font-size: 18px;`;
 const UserLocation = styled.p`margin: 10px 0; font-size: 18px;`;
+const UserEmail = styled.p`margin: 10px 0; font-size: 18px;`;
