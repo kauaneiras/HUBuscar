@@ -1,13 +1,12 @@
-//----------------------------------------- Imports -----------------------------------------//
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-//----------------------------------------- Component -----------------------------------------//
+
 import Navbar from './navbar';
-//----------------------------------------- Images -----------------------------------------//
+
 import lupa from '../assets/imgs/lupa.png';
 import menu from '../assets/imgs/menu.png';
-//----------------------------------------- colors -----------------------------------------//
+
 import colors from '../style/colors'
 
 
@@ -56,7 +55,7 @@ const SearchBar: React.FC = () => {
 
 export default SearchBar;
 
-//----------------------------------------- Style -----------------------------------------//
+//-------------------------------------------- Styled Components --------------------------------------------------//
 const SearchBarAndSuggestionContainer = styled.div`
     display: flex;
     flex-direction: column;

@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import UsersCardHistory from '../components/usersCardHistory';
 import SearchBar from '../components/searchBar';
-import colors from '../style/colors';
 
+import colors from '../style/colors';
 
 interface UserHistory { login: string; photo: string; bio: any; location: string; }
 const History: React.FC = () => {
@@ -21,7 +22,6 @@ const History: React.FC = () => {
 };
 export default History;
 
-
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -30,8 +30,6 @@ const Container = styled.div`
     height: 100%;
     width: 100vw;
     background-color:${colors.background};
-    h1{
-        margin: 20px;
-    }
+    h1{margin: 20px;}
 `;
 

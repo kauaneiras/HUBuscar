@@ -1,14 +1,13 @@
-//-------------------------------------------- Imports --------------------------------------------------//
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-//-------------------------------------------- Images --------------------------------------------------//
+
 import Forks from '../assets/imgs/fork.png';
 import Stars from '../assets/imgs/stars.webp';
-//-------------------------------------------- Style --------------------------------------------------//
+
 import colors from '../style/colors';
-//-------------------------------------------- Types --------------------------------------------------//
+
 interface RepoCardProps {
     login: string;
     name: string;
@@ -20,7 +19,7 @@ interface RepoCardProps {
     forks: number;
     link: string;
 };
-//-------------------------------------------- Code --------------------------------------------------//
+
 const RepoCard: React.FC<RepoCardProps> = (props) => {
     function formatDate(i: string): string { const date = new Date(i); return format(date, 'dd MMM yyyy'); }
 
