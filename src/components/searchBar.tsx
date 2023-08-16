@@ -7,51 +7,91 @@ import Navbar from './navbar';
 import lupa from '../assets/imgs/lupa.png';
 import menu from '../assets/imgs/menu.png';
 
-import colors from '../style/colors'
-
+import colors from '../style/colors';
 
 const SearchBar: React.FC = () => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const [navbarOpen, setNavbarOpen] = useState(false); 
+    const [navbarOpen, setNavbarOpen] = useState(false);
     const [searchText, setSearchText] = useState("");
+    const [isSuggestionVisible, setIsSuggestionVisible] = useState(true);
+    const [isClearButtonVisible, setIsClearButtonVisible] = useState(true);
     const inputRef = useRef<HTMLInputElement>(null);
-  
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {if (event.key === "Enter" && searchText.trim() !== "") {window.location.href = `/search/${searchText}`;}};
-  
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter" && searchText.trim() !== "") {
+            window.location.href = `/search/${searchText}`;
+        }
+    };
+
     useEffect(() => {
-      if (isExpanded) {inputRef.current?.focus();}
-      const handleDocumentClick = (event: MouseEvent) => {
-        if (!event.target) return;
-        const target = event.target as HTMLElement;
-        if (!target.closest("#search-bar-container")) {setIsExpanded(false); setSearchText("");}
-      };
-      document.addEventListener("click", handleDocumentClick);
-      return () => {document.removeEventListener("click", handleDocumentClick);};
+        if (isExpanded) {
+            inputRef.current?.focus();
+        }
+        const handleDocumentClick = (event: MouseEvent) => {
+            if (!event.target) return;
+            const target = event.target as HTMLElement;
+            if (!target.closest("#search-bar-container")) {
+                setIsExpanded(false);
+                setSearchText("");
+                setIsSuggestionVisible(true);
+                setIsClearButtonVisible(true);
+            }
+        };
+        document.addEventListener("click", handleDocumentClick);
+        return () => {
+            document.removeEventListener("click", handleDocumentClick);
+        };
     }, [isExpanded]);
 
     return (
-      <>
-      {navbarOpen && <Navbar setNavbarOpen={setNavbarOpen} />}
-      <SearchBarAndSuggestionContainer onBlur={() => setIsExpanded(false)}>
-        <Container id="search-bar-container">
-          {!isExpanded && <MenuIcon src={menu} alt="menu" onClick={() => setNavbarOpen(true)}/>}
-          <SearchIconContainer isExpanded={isExpanded} onClick={() => !isExpanded && setIsExpanded(true)} disabled={isExpanded}>
-            <SearchIcon src={lupa} />
-            <Input ref={inputRef} isExpanded={isExpanded} value={searchText} onChange={(e) => setSearchText(e.target.value)} onKeyDown={handleKeyDown} placeholder="Pesquise por um usuário"/>
-            {searchText && <ClearButton onClick={() => setSearchText("")}>X</ClearButton>}
-          </SearchIconContainer>
-        </Container>
-        <AlignSuggestion>
-          {searchText && (
-            <Link to={`/search/${searchText}`}>
-              <SuggestionContainer><SearchIcon src={lupa}/>{searchText}<p>Pesquisar no HUBuscar</p></SuggestionContainer>
-            </Link>
-          )}
-        </AlignSuggestion>
-      </SearchBarAndSuggestionContainer>
-      </>
+        <>
+            {navbarOpen && <Navbar setNavbarOpen={setNavbarOpen} />}
+            <SearchBarAndSuggestionContainer onBlur={() => setIsExpanded(false)}>
+                <Container id="search-bar-container">
+                    {!isExpanded && <MenuIcon src={menu} alt="menu" onClick={() => setNavbarOpen(true)} />}
+                    <SearchIconContainer
+                        isExpanded={isExpanded}
+                        onClick={() => !isExpanded && setIsExpanded(true)}
+                        disabled={isExpanded}
+                    >
+                        <SearchIcon src={lupa} />
+                        <Input
+                            ref={inputRef}
+                            isExpanded={isExpanded}
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Pesquise por um usuário"
+                        />
+                        {searchText && (
+                            <ClearButton
+                                onClick={() => {
+                                    setSearchText("");
+                                    setIsSuggestionVisible(false);
+                                    setIsClearButtonVisible(false);
+                                }}
+                                style={{ display: isClearButtonVisible ? 'block' : 'none' }}
+                            >
+                                X
+                            </ClearButton>
+                        )}
+                    </SearchIconContainer>
+                </Container>
+                <AlignSuggestion>
+                    {isSuggestionVisible && searchText && (
+                        <Link to={`/search/${searchText}`}>
+                            <SuggestionContainer>
+                                <SearchIcon src={lupa} />
+                                {searchText}
+                                <p>Pesquisar no HUBuscar</p>
+                            </SuggestionContainer>
+                        </Link>
+                    )}
+                </AlignSuggestion>
+            </SearchBarAndSuggestionContainer>
+        </>
     );
-  };
+};
 
 export default SearchBar;
 

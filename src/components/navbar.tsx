@@ -22,8 +22,16 @@ const Navbar: React.FC<NavBarProps> = ({ setNavbarOpen }) => {
         <CoverScreen onClick={() => setNavbarOpen(false)}>
             <Nav screenWidth={screenWidth}>
                 <NavLinks>
-                    <Link to="/"><LogoBox screenWidth={screenWidth}><LogoImg src={logo} screenWidth={screenWidth}/><LogoText>HUBuscar</LogoText> </LogoBox></Link>
-                    <Link to="/history"><Butons screenWidth={screenWidth}><ButtonImg screenWidth={screenWidth} src={history}/>Historico</Butons></Link>
+                    <Link to="/" onClick={() => setNavbarOpen(false)}>
+                        <LogoBox screenWidth={screenWidth}> 
+                            <LogoContainer>
+                                <LogoImg src={logo} screenWidth={screenWidth} />
+                                <LogoText>HUBuscar</LogoText>
+                            </LogoContainer>
+                            <LinkButton screenWidth={screenWidth}><h1>X</h1></LinkButton>
+                        </LogoBox>
+                    </Link>
+                    <Link to="/history"><Butons screenWidth={screenWidth}><ButtonImg screenWidth={screenWidth} src={history}/>Histórico</Butons></Link>
                     <Link to="/about"><Butons screenWidth={screenWidth}><ButtonImg src={about} screenWidth={screenWidth}/>About</Butons></Link>
                 </NavLinks>
             </Nav>
@@ -79,9 +87,9 @@ const Butons = styled.button<RepoInfosProps>`
     font-weight: 500;
     color: #000;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
     &:hover {color: #fff; background-color: ${colors.navbarButtonBackgroundHover};}
     &:active {color: #fff; background-color: ${colors.navbarButtonBackgroundActive};}
+    padding: 10px;
 `;
 const ButtonImg = styled.img<RepoInfosProps>`
     display: ${({ screenWidth }) => (screenWidth < 1200 ? 'none': 'block')};
@@ -97,6 +105,7 @@ const LogoBox = styled.div<RepoInfosProps>`
     justify-content: center;
     align-items: center;
     background-color: ${colors.backgroundNavbarLogo};
+
 `;
 const LogoText = styled.h1`
     font-size: 1.8rem;
@@ -105,5 +114,28 @@ const LogoText = styled.h1`
     margin-left: 10px;
     font-family: 'Helvetica Neue', sans-serif;
 `;
-const LogoImg = styled.img<RepoInfosProps>`width: 50px; height: 50px; display: ${({ screenWidth }) => (screenWidth < 1200 ? 'none': 'block')};
+const LogoImg = styled.img<RepoInfosProps>`width: 50px; height: 50px;
 `;
+
+const LinkButton = styled.div<RepoInfosProps>`
+    z-index: 10;
+    display: ${({ screenWidth }) => (screenWidth > 600 ? 'none': 'flex')};
+    position: absolute;
+    right: 10px;
+    height: 40px;
+    width: 40px;
+    border-radius: 27px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: background-color 0.3s ease; 
+    font-size: 10px;
+    &:hover {
+        background-color: rgba(255, 255, 255, 1); 
+    }
+
+`
+const LogoContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+`
