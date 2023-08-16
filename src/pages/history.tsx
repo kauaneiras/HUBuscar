@@ -10,9 +10,7 @@ const History: React.FC = () => {
     return (
         <div>
             <h1>History</h1>
-            {storedUsers.map((user, index) => (
-                <UsersCard key={index} login={user.login} photo={user.photo} />
-            ))}
+            {storedUsers.map((user, index) => (<UsersCard key={index} login={user.login} photo={user.photo}/>))}
         </div>
     );
 };  

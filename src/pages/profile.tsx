@@ -116,7 +116,7 @@ const Container = styled.div`
     justify-content: space-around;
     margin-top: 50px;
     padding: 0 50px;
-    background-color: ${colors.light.searchBarBackground};
+    background-color: ${colors.background};
 `;
 
 const UserInfos = styled.div<RepoInfosProps>`

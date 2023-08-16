@@ -30,7 +30,6 @@ const SearchBar: React.FC = () => {
       return () => {document.removeEventListener("click", handleDocumentClick);};
     }, [isExpanded]);
 
-  
     return (
       <>
       {navbarOpen && <Navbar setNavbarOpen={setNavbarOpen} />}
@@ -46,11 +45,7 @@ const SearchBar: React.FC = () => {
         <AlignSuggestion>
           {searchText && (
             <Link to={`/search/${searchText}`}>
-              <SuggestionContainer>
-                <SearchIcon src={lupa} />
-                {searchText}
-                <p> Pesquisar no HUBuscar </p>
-              </SuggestionContainer>
+              <SuggestionContainer><SearchIcon src={lupa}/>{searchText}<p>Pesquisar no HUBuscar</p></SuggestionContainer>
             </Link>
           )}
         </AlignSuggestion>
@@ -66,24 +61,23 @@ const SearchBarAndSuggestionContainer = styled.div`
     display: flex;
     flex-direction: column;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75); 
+    background-color: ${colors.backgroundSearchBar};
 `;
-
 const AlignSuggestion = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
 `;
-
 const SuggestionContainer = styled.div`
     position: absolute;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: ${colors.light.searchBarBackground};
+    background-color: ${colors.backgroundSearchBarInput};
     border: 1px solid #ccc;
     width: 90%;
-    top: 50px;
+    top: 60px;
     left: 5%;
     color: black;
     font-size: 20px;
@@ -92,7 +86,6 @@ const SuggestionContainer = styled.div`
     padding-left: 20px;
     padding-right: 20px;
 `;
-
 const Container = styled.div`
     display: flex;
     height: 70px;
@@ -102,12 +95,11 @@ const Container = styled.div`
     margin-left: 20px;
     margin-right: 20px;
 `;
-
 const SearchIconContainer = styled.button<{ isExpanded: boolean }>`
     width: ${props => (props.isExpanded ? '100%' : '50px')};
     height: 50px;
     border-radius: 25px;
-    background-color: ${colors.light.searchBarBackground};
+    background-color: ${colors.backgroundSearchBarInput};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -115,19 +107,14 @@ const SearchIconContainer = styled.button<{ isExpanded: boolean }>`
     transition: ${(props) => (props.isExpanded ? '0.6s' : 'none')};
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
 `;
-
-const SearchIcon = styled.img`width: 30px; height: 30px;`;
-const MenuIcon = styled.img`width: 30px; height: 30px;`;
 const Input = styled.input<{ isExpanded: boolean }>`
     width: ${props => (props.isExpanded ? 'calc(100% - 40px)' : '0')};
     height: 100%;
     border: none;
     outline: none;
     font-size: 20px;
-    transition: 0.3s;
     background-color: transparent;
 `;
-
 const ClearButton = styled.button`
     background-color: transparent;
     height: 30px;
@@ -137,10 +124,14 @@ const ClearButton = styled.button`
     cursor: pointer;
     font-size: 20px;
     font-weight: bold;
-    transition: 0.3s;
-    color: red;
-
-    &:hover {
-        color: white;
-    }
+    transition: 0.5s;
+    color: ${colors.clearButtonColor};
+    &:hover {color: ${colors.clearButtonColorHover};}
 `;
+const MenuIcon = styled.img`
+    width: 30px; 
+    height: 30px;
+    transition: 0.5s;
+    &:hover {width: 35px; height: 35px;}
+    `;
+const SearchIcon = styled.img`width: 30px; height: 30px;`;

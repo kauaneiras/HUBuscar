@@ -1,19 +1,24 @@
+//------------------------------------- Imports --------------------------------------//
 import React from "react";
 import styled, {keyframes} from "styled-components";
 import { Link } from "react-router-dom";
+//------------------------------------- Styles -------------------------------------//
 import colors from "../style/colors";
+//------------------------------------- Images -------------------------------------//
+import logo from "../assets/imgs/Logo.png";
+import history from "../assets/imgs/history.png";
+import about from "../assets/imgs/about.png";
 
 interface NavBarProps { setNavbarOpen: (value: boolean) => void; }
-
 const Navbar: React.FC<NavBarProps> = ({ setNavbarOpen }) => {
-
 
     return (
         <CoverScreen onClick={() => setNavbarOpen(false)}>
             <Nav>
                 <NavLinks>
-                    <Link to="/"><Logo>HUBuscar</Logo></Link>
-                    <Link to="/history"><Butons>Buscas Recentes</Butons></Link>
+                    <Link to="/"><LogoBox><LogoImg src={logo}/><LogoText>HUBuscar</LogoText> </LogoBox></Link>
+                    <Link to="/history"><Butons><ButtonImg src={history}/>Historico</Butons></Link>
+                    <Link to="/about"><Butons><ButtonImg src={about}/>About</Butons></Link>
                 </NavLinks>
             </Nav>
         </CoverScreen>
@@ -45,47 +50,50 @@ const Nav = styled.nav`
     background-color: ${colors.backgroungNavBar};
     animation: ${slideAnimation} 0.6s ease-in-out;
 `;
-
 const NavLinks = styled.ul`
     list-style: none;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    width: 100%;
     height: 100%;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
 `;
-
 const Butons = styled.button`
-    background-color: #fff;
-    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: ${colors.navbarButtonBackground};
+    width: 20vw;
     height: 50px;
     border: none;
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 1.4rem;
+    font-weight: 500;
     color: #000;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    &:hover {color: #fff; background-color: #0BA0E3;}
+    &:hover {color: #fff; background-color: ${colors.navbarButtonBackgroundHover};}
+    &:active {color: #fff; background-color: ${colors.navbarButtonBackgroundActive};}
 `;
-
-const Logo = styled.div`
-    background-color: blue;
-    width: 100%;
-    height: 50px;
-    border: none;
-    font-size: 1.5rem;
+const ButtonImg = styled.img`
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+`;
+const LogoBox = styled.div`
+    width: 20vw;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: ${colors.backgroundNavbarLogo};
+`;
+const LogoText = styled.h1`
+    font-size: 1.8rem;
     font-weight: 600;
-    color: #000;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    &:hover {
-        color: #fff;
-        background-color: red;
-
-    }
+    color: ${colors.navbarLogoText};
+    margin-left: 10px;
+    font-family: 'Helvetica Neue', sans-serif;
 `;
-
-
-
-
+const LogoImg = styled.img`width: 50px; height: 50px;`;
