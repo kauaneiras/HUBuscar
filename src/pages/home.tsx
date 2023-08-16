@@ -1,22 +1,35 @@
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
-import React from 'react';
-
 import SearchBar from '../components/searchBar';
-
 import bemvindo from '../assets/imgs/bemvindo.png'
+import bemvindotablet from '../assets/imgs/bemvindotablet.png'
+import bemvindomobile from '../assets/imgs/bemvindomobile.png'
 
 const Home: React.FC = () => {
+    const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
+
+    useEffect(() => {
+        const updateScreenWidth = () => { setScreenWidth(window.innerWidth); }
+        window.addEventListener('resize', updateScreenWidth);
+        return () => { window.removeEventListener('resize', updateScreenWidth); }
+    }, []);
+
     return (
         <>
             <SearchBar />
-            <Container><img src={bemvindo} alt="bem vindo" style={{objectFit: 'contain',}}/></Container>
+            <Container screenWidth={screenWidth}>
+                {
+                    screenWidth < 600 ? <img src={bemvindomobile} /> :
+                    (screenWidth < 1150 ? <img src={bemvindotablet} /> : <img src={bemvindo} />)
+                }
+            </Container>
         </>
     );
 }
 
 export default Home;
-
-const Container = styled.div`
+interface RepoInfosProps {screenWidth: number;}
+const Container = styled.div<RepoInfosProps>`
     background-color: #e5e5e5;
     top: 70px;
     width: 100%;
@@ -29,6 +42,10 @@ const Container = styled.div`
     font-weight: bold;
     position: fixed;
     z-index: -1;
-    img{ width: 100%; height: 100%;}
+    img{ 
+        width: 100%; 
+        height: 100%;
+        object-fit: cover;
+    }
 `;
 
